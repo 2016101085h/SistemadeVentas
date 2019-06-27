@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="card-header">
                         <i class="fa fa-align-justify"></i> Categorías
-                        <button type="button" class="btn btn-secondary" >
+                        <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-secondary" >
                             <i class="icon-plus"></i>&nbsp;Nuevo
                         </button>
                     </div>
@@ -42,7 +42,7 @@
                             <tbody>
                                 <tr v-for="categoria in arrayCategoria" :key="categoria.id">
                                     <td>
-                                        <button type="button" class="btn btn-warning btn-sm">
+                                        <button type="button" @click="abrirModal('categoria','actualizar',categoria)" class="btn btn-warning btn-sm">
                                           <i class="icon-pencil"></i>
                                         </button> &nbsp;
                                         <button type="button" class="btn btn-danger btn-sm" >
@@ -95,11 +95,11 @@
                 <!-- Fin ejemplo de tabla Listado -->
             </div>
             <!--Inicio del modal agregar/actualizar-->
-            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal fade" tabindex="-1" :class="{'mostrar': modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
                 <div class="modal-dialog modal-primary modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Agregar categoría</h4>
+                            <h4 class="modal-title" v-text="tituloModal"></h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">×</span>
                             </button>
@@ -164,7 +164,9 @@
             return{
                 nombre: '',
                 descripcion:'',
-                arrayCategoria: []
+                arrayCategoria: [],
+                modal:0,
+                tituloModal:''
             }
         },
         methods:{
@@ -183,6 +185,28 @@
             },
             registrarCategoria(){
 
+            },
+            abrirModal(modelo, accion, data =[]){
+                switch(modelo){
+                    case "categoria":
+                    {
+                        switch(accion){
+                            case 'registrar':
+                            {
+                                this.modal=1;
+                                this.tituloModal='Registrar Categoria'
+                                this.nombre='';
+                                this.descripcion='';
+                                break
+
+                            }
+                            case 'actualizar':
+                            {
+
+                            }
+                        }    
+                    }
+                }
             }
         },
         mounted() {
@@ -190,3 +214,20 @@
         }
     }
 </script>
+<style>
+    .modal-content{
+        width: 100%;
+        position: absolute !important;
+    }
+    .mostrar{
+        display: list-item !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        background-color: #3c29297a !important;
+        transition: all .5s ease-in-out !important;
+    }
+    .mostrar:hover{
+        opacity: 2 !important;
+    }
+</style>
+
