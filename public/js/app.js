@@ -1857,6 +1857,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1864,7 +1872,10 @@ __webpack_require__.r(__webpack_exports__);
       descripcion: '',
       arrayCategoria: [],
       modal: 0,
-      tituloModal: ''
+      tituloModal: '',
+      tipoAccion: 0,
+      errorCategoria: 0,
+      errorMostrarMsjCategoria: []
     };
   },
   methods: {
@@ -1879,7 +1890,35 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    registrarCategoria: function registrarCategoria() {},
+    registrarCategoria: function registrarCategoria() {
+      if (this.validarCategoria()) {
+        return;
+      }
+
+      var me = this;
+      axios.post('categoria/registrar', {
+        'nombre': this.nombre,
+        'descripcion': this.descripcion
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarCategoria();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    validarCategoria: function validarCategoria() {
+      this.errorCategoria = 0;
+      this.errorMostrarMsjCategoria = [];
+      if (!this.nombre) this.errorMostrarMsjCategoria.push('El nombre de la categoria no puede estar vacia');
+      if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
+      return this.errorCategoria;
+    },
+    cerrarModal: function cerrarModal() {
+      this.modal = 0;
+      this.tituloModal = '';
+      this.nombre = '';
+      this.descripcion = '';
+    },
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 
@@ -1893,6 +1932,7 @@ __webpack_require__.r(__webpack_exports__);
                   this.tituloModal = 'Registrar Categoria';
                   this.nombre = '';
                   this.descripcion = '';
+                  this.tipoAccion = 1;
                   break;
                 }
 
@@ -6367,7 +6407,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100%;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n    transition: all .5s ease-in-out !important;\n}\n.mostrar:hover{\n    opacity: 2 !important;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100%;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n    transition: all .5s ease-in-out !important;\n}\n.mostrar:hover{\n    opacity: 2 !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red;\n    font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -37966,19 +38006,193 @@ var render = function() {
                   domProps: { textContent: _vm._s(_vm.tituloModal) }
                 }),
                 _vm._v(" "),
-                _vm._m(5)
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        return _vm.cerrarModal()
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
               ]),
               _vm._v(" "),
-              _vm._m(6),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "form-horizontal",
+                    attrs: {
+                      action: "",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Nombre")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.nombre,
+                              expression: "nombre"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Nombre de categoría"
+                          },
+                          domProps: { value: _vm.nombre },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.nombre = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "email-input" }
+                        },
+                        [_vm._v("Descripción")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.descripcion,
+                              expression: "descripcion"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "email",
+                            placeholder: "Ingrese descripcion"
+                          },
+                          domProps: { value: _vm.descripcion },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.descripcion = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.errorCategoria,
+                            expression: "errorCategoria"
+                          }
+                        ],
+                        staticClass: "form-group row div-error"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "text-center text-error" },
+                          _vm._l(_vm.errorMostrarMsjCategoria, function(error) {
+                            return _c("div", {
+                              key: error,
+                              domProps: { textContent: _vm._s(error) }
+                            })
+                          }),
+                          0
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]),
               _vm._v(" "),
-              _vm._m(7)
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.cerrarModal()
+                      }
+                    }
+                  },
+                  [_vm._v("Cerrar")]
+                ),
+                _vm._v(" "),
+                _vm.tipoAccion == 1
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.registrarCategoria()
+                          }
+                        }
+                      },
+                      [_vm._v("Guardar")]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.tipoAccion == 2
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  : _vm._e()
+              ])
             ])
           ]
         )
       ]
     ),
     _vm._v(" "),
-    _vm._m(8)
+    _vm._m(5)
   ])
 }
 var staticRenderFns = [
@@ -38105,109 +38319,6 @@ var staticRenderFns = [
           ])
         ])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: {
-          type: "button",
-          "data-dismiss": "modal",
-          "aria-label": "Close"
-        }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-body" }, [
-      _c(
-        "form",
-        {
-          staticClass: "form-horizontal",
-          attrs: { action: "", method: "post", enctype: "multipart/form-data" }
-        },
-        [
-          _c("div", { staticClass: "form-group row" }, [
-            _c(
-              "label",
-              {
-                staticClass: "col-md-3 form-control-label",
-                attrs: { for: "text-input" }
-              },
-              [_vm._v("Nombre")]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-md-9" }, [
-              _c("input", {
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  id: "nombre",
-                  name: "nombre",
-                  placeholder: "Nombre de categoría"
-                }
-              }),
-              _vm._v(" "),
-              _c("span", { staticClass: "help-block" }, [
-                _vm._v("(*) Ingrese el nombre de la categoría")
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group row" }, [
-            _c(
-              "label",
-              {
-                staticClass: "col-md-3 form-control-label",
-                attrs: { for: "email-input" }
-              },
-              [_vm._v("Descripción")]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-md-9" }, [
-              _c("input", {
-                staticClass: "form-control",
-                attrs: {
-                  type: "email",
-                  id: "descripcion",
-                  name: "descripcion",
-                  placeholder: "Enter Email"
-                }
-              })
-            ])
-          ])
-        ]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-secondary",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Cerrar")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Guardar")]
-      )
     ])
   },
   function() {

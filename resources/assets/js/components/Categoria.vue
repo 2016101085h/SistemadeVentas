@@ -100,7 +100,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" v-text="tituloModal"></h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
                               <span aria-hidden="true">×</span>
                             </button>
                         </div>
@@ -109,21 +109,29 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                                     <div class="col-md-9">
-                                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre de categoría">
-                                        <span class="help-block">(*) Ingrese el nombre de la categoría</span>
+                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de categoría">
+                                        
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
                                     <div class="col-md-9">
-                                        <input type="email" id="descripcion" name="descripcion" class="form-control" placeholder="Enter Email">
+                                        <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripcion">
+                                    </div>
+                                </div>
+                                <div v-show="errorCategoria" class="form-group row div-error">
+                                    <div class="text-center text-error">
+                                        <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error">
+
+                                        </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                            <button type="button" v-if="tipoAccion==1" @click="registrarCategoria()" class="btn btn-primary">Guardar</button>
+                            <button type="button" v-if="tipoAccion==2" class="btn btn-primary">Actualizar</button>
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -166,7 +174,10 @@
                 descripcion:'',
                 arrayCategoria: [],
                 modal:0,
-                tituloModal:''
+                tituloModal:'',
+                tipoAccion:0,
+                errorCategoria:0,
+                errorMostrarMsjCategoria:[]
             }
         },
         methods:{
@@ -184,7 +195,35 @@
                 
             },
             registrarCategoria(){
+                if(this.validarCategoria()){
+                    return;
+                }
+                let me=this;
+                axios.post('categoria/registrar',{
+                    'nombre':this.nombre,
+                    'descripcion':this.descripcion,
+                }
+                ).then(function (response){
+                    me.cerrarModal();
+                    me.listarCategoria();
+                }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            validarCategoria(){
+                this.errorCategoria=0;
+                this.errorMostrarMsjCategoria=[];
+                if(!this.nombre) this.errorMostrarMsjCategoria.push('El nombre de la categoria no puede estar vacia');
+                if(this.errorMostrarMsjCategoria.length) this.errorCategoria=1;
+                return this.errorCategoria;
 
+
+            },
+            cerrarModal(){
+                this.modal=0;
+                this.tituloModal='';
+                this.nombre='';
+                this.descripcion='';
             },
             abrirModal(modelo, accion, data =[]){
                 switch(modelo){
@@ -197,6 +236,7 @@
                                 this.tituloModal='Registrar Categoria'
                                 this.nombre='';
                                 this.descripcion='';
+                                this.tipoAccion=1;
                                 break
 
                             }
@@ -228,6 +268,17 @@
     }
     .mostrar:hover{
         opacity: 2 !important;
+    }
+    .div-error{
+        display: flex;
+        justify-content: center;
+
+    }
+    .text-error{
+        color: red;
+        font-weight: bold;
+        
+
     }
 </style>
 
